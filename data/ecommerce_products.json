@@ -1,0 +1,14 @@
+{
+  "products": [
+    {"id": "P1001", "name": "星耀 X1 智能手机", "brand": "星耀", "category": "数码", "price": 3999, "stock": 120, "specs": "8GB+256GB / 12GB+512GB，6.7英寸OLED，5000mAh，50MP三摄", "warranty": "1年整机保修", "support_7day_return": false, "return_note": "激活后不支持七天无理由，仅质量问题退换"},
+    {"id": "P1002", "name": "云帆 T2 笔记本电脑", "brand": "云帆", "category": "数码", "price": 5499, "stock": 45, "specs": "14英寸2.8K，16GB内存，1TB SSD，1.29kg", "warranty": "2年整机保修", "support_7day_return": false, "return_note": "激活后不支持七天无理由"},
+    {"id": "P1003", "name": "声动 P1 无线降噪耳机", "brand": "声动", "category": "数码", "price": 599, "stock": 320, "specs": "主动降噪42dB，30小时续航，蓝牙5.3", "warranty": "1年整机保修", "support_7day_return": true, "return_note": "未拆封支持七天无理由"},
+    {"id": "P1004", "name": "清风 K3 变频空调", "brand": "清风", "category": "家电", "price": 2899, "stock": 60, "specs": "1.5匹一级能效，智能温控，自清洁", "warranty": "整机6年，压缩机10年", "support_7day_return": true, "return_note": "安装后7天内质量问题可退换"},
+    {"id": "P1005", "name": "净味 R2 冰箱", "brand": "净味", "category": "家电", "price": 3299, "stock": 35, "specs": "456L十字对开门，风冷无霜", "warranty": "整机2年，压缩机3年", "support_7day_return": true, "return_note": "大件需预约上门"},
+    {"id": "P1006", "name": "简约系列男士纯棉衬衫", "brand": "简约", "category": "服饰", "price": 129, "stock": 500, "specs": "100%精梳棉，修身版型，多色可选", "warranty": "无", "support_7day_return": true, "return_note": "保留吊牌可七天无理由"},
+    {"id": "P1007", "name": "轻羽系列女士羽绒服", "brand": "轻羽", "category": "服饰", "price": 499, "stock": 220, "specs": "90%白鸭绒，防泼水面料", "warranty": "无", "support_7day_return": true, "return_note": "保留吊牌可七天无理由"},
+    {"id": "P1008", "name": "水润系列保湿精华 30ml", "brand": "水润", "category": "美妆", "price": 168, "stock": 400, "specs": "玻尿酸补水，敏感肌可用", "warranty": "无", "support_7day_return": true, "return_note": "未拆封可七天无理由，拆封后仅质量问题"},
+    {"id": "P1009", "name": "坚果每日礼盒 30包", "brand": "果园", "category": "食品", "price": 89, "stock": 800, "specs": "核桃、腰果、巴旦木混合", "warranty": "无", "support_7day_return": false, "return_note": "食品类非质量问题不支持退货"},
+    {"id": "P1010", "name": "有机纯牛奶 250ml×24盒", "brand": "田园", "category": "食品", "price": 59.9, "stock": 1000, "specs": "全脂高钙，常温保存", "warranty": "无", "support_7day_return": false, "return_note": "乳制品不支持无理由退货"}
+  ]
+}

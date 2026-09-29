@@ -1,0 +1,12 @@
+# V1 运行依赖（与 RAG_qa_system 共用，确保以下已安装）
+langgraph
+langchain-core
+langchain-openai
+langchain-text-splitters
+chromadb
+sentence-transformers
+scikit-learn
+rank-bm25
+jieba
+numpy
+python-dotenv
