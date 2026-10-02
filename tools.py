@@ -17,6 +17,7 @@ from threading import Lock
 
 from langchain_core.tools import tool
 
+import order_store
 import retriever_factory
 
 _AGENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -130,5 +131,69 @@ def calculate(expression: str) -> float:
     return round(float(_safe_eval(expression)), 2)
 
 
-# 构成 Agent 的工具集。后续可扩展 get_order_status、apply_refund、check_coupon 等确定性动作工具
-AGENT_TOOLS = [search_product_knowledge, get_product_detail, calculate]
+@tool
+def get_order_status(order_id: str) -> dict:
+    """
+    按订单号【精确查询】订单状态（商品、金额、下单日期、当前状态、是否已有退款记录）。
+    适用于：用户询问"我的订单到哪了""订单能不能退""这个订单多少钱"等需要先确认订单信息的问题。
+    参数：
+      order_id: 订单号，如 SO20260901001。
+    """
+    order = order_store.get_order(order_id)
+    if order is None:
+        return {"found": False, "message": f"未找到订单：{order_id}"}
+    return {
+        "found": True,
+        "order_id": order["order_id"],
+        "product_name": order["product_name"],
+        "quantity": order["quantity"],
+        "amount": order["amount"],
+        "status": order["status"],
+        "order_date": order["order_date"],
+        "refund_amount": order.get("refund_amount"),
+        "refund_status": order.get("refund_status"),
+    }
+
+
+@tool
+def get_logistics(order_id: str) -> dict:
+    """
+    按订单号查询【物流轨迹】最新节点。
+    适用于：用户询问包裹到哪里了、什么时候能到、为什么还没发货。
+    参数：
+      order_id: 订单号，如 SO20260901001。
+    """
+    order = order_store.get_order(order_id)
+    if order is None:
+        return {"found": False, "message": f"未找到订单：{order_id}"}
+    return {
+        "found": True,
+        "order_id": order["order_id"],
+        "carrier": order.get("carrier", ""),
+        "tracking_no": order.get("tracking_no", ""),
+        "latest_track": order.get("latest_track", ""),
+        "tracked_at": order.get("tracked_at", ""),
+    }
+
+
+@tool
+def apply_refund(order_id: str, amount: float) -> dict:
+    """
+    对指定订单【执行退款】（会真实写入订单数据）。金额需大于 0 且不超过订单实付金额，同一订单不可重复退款。
+    本工具只负责执行；是否需要人工审批由上层流程决定（售后专员流程中，超过审批阈值的退款会先转人工）。
+    参数：
+      order_id: 订单号，如 SO20260901001。
+      amount: 退款金额（元）。
+    """
+    return order_store.execute_refund(order_id, amount)
+
+
+# 构成 Agent 的工具集。
+# 售前专员：只有商品与价格相关能力，结构上拿不到订单与退款工具（工具权限隔离）
+PRESALE_TOOLS = [search_product_knowledge, get_product_detail, calculate]
+
+# 售后专员：可查订单、查物流、查售后政策、执行退款
+AFTERSALE_TOOLS = [search_product_knowledge, get_order_status, get_logistics, apply_refund, calculate]
+
+# V1 单 agent 使用的全量工具集（保持向后兼容）
+AGENT_TOOLS = [search_product_knowledge, get_product_detail, get_order_status, get_logistics, apply_refund, calculate]

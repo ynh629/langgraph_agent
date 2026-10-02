@@ -1,4 +1,4 @@
-# V1 运行依赖（与 RAG_qa_system 共用，确保以下已安装）
+# V1 运行依赖（确保以下已安装）
 langgraph
 langchain-core
 langchain-openai

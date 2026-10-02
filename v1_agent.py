@@ -11,6 +11,12 @@ V1：基于 LangGraph 的电商智能客服 Agent。
 依赖 .env 中的 deepseek_api_key / LLM_BASE_URL（见你的 graph.py 用法）。
 """
 import os
+
+# 离线优先：本地已缓存 BGE 模型（~/.cache/huggingface/local），跳过 HuggingFace 联网检查，
+# 避免 WinError 10060 连接超时触发的 5 次重试阻塞。必须在导入检索链之前设置。
+os.environ.setdefault("HF_HUB_OFFLINE", "1")
+os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
+
 from dotenv import load_dotenv
 
 from langgraph.graph import MessagesState, StateGraph, START, END
