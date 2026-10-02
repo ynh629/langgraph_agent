@@ -26,6 +26,16 @@ DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 _loggers = {}
 
 
+def _console_stream():
+    """控制台日志输出流。
+
+    默认 stdout 以保持原有行为；设置环境变量 LOG_CONSOLE_STREAM=stderr 时改为 stderr。
+    MCP Server（stdio transport）必须用 stderr：stdout 是协议流，写日志会让 client 解析失败。
+    """
+    target = os.getenv("LOG_CONSOLE_STREAM", "stdout").strip().lower()
+    return sys.stderr if target == "stderr" else sys.stdout
+
+
 def _ensure_log_dir():
     """确保日志目录存在。"""
     try:
@@ -56,8 +66,8 @@ def get_logger(name: str = "rag_system") -> logging.Logger:
         _loggers[name] = logger
         return logger
 
-    # 1. 控制台 handler
-    console_handler = logging.StreamHandler(sys.stdout)
+    # 1. 控制台 handler（MCP Server 下需走 stderr，见 _console_stream）
+    console_handler = logging.StreamHandler(_console_stream())
     console_handler.setLevel(_resolve_level())
     console_handler.setFormatter(logging.Formatter(LOG_FORMAT, datefmt=DATE_FORMAT))
     logger.addHandler(console_handler)

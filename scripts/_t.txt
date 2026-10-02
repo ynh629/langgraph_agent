@@ -1,0 +1,4 @@
+﻿presale: ['search_product_knowledge', 'get_product_detail', 'calculate']
+aftersale: ['search_product_knowledge', 'get_order_status', 'get_logistics', 'apply_refund', 'calculate']
+calc: 3599.1
+desc_len: 188

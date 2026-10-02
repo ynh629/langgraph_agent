@@ -23,14 +23,14 @@
       "product_name": "有机纯牛奶 250ml×24盒",
       "quantity": 1,
       "amount": 59.9,
-      "status": "已完成",
+      "status": "退款中",
       "order_date": "2026-09-02",
       "carrier": "优选物流",
       "tracking_no": "YD100200301",
       "latest_track": "已签收，签收人：本人",
       "tracked_at": "2026-09-04 09:12",
-      "refund_amount": null,
-      "refund_status": null
+      "refund_amount": 59.9,
+      "refund_status": "退款中"
     },
     {
       "order_id": "SO20260903003",
@@ -71,14 +71,14 @@
       "product_name": "清风 K3 变频空调",
       "quantity": 1,
       "amount": 2899,
-      "status": "已完成",
+      "status": "退款中",
       "order_date": "2026-09-05",
       "carrier": "大件专送",
       "tracking_no": "DJ200300501",
       "latest_track": "已完成安装并签收",
       "tracked_at": "2026-09-09 15:30",
-      "refund_amount": null,
-      "refund_status": null
+      "refund_amount": 2899.0,
+      "refund_status": "退款中"
     },
     {
       "order_id": "SO20260906006",

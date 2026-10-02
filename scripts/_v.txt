@@ -1,0 +1,217 @@
+﻿python.exe : [2026-10-02 18:33:42,881] [INFO] [retrieval_server] retrieval-server 启动（stdio）
+At line:15 char:2984
++ ... pgrep\bin'; & "D:\VSCode-Python\python3\python.exe" -B "C:\Users\Admi ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([2026-10-02 18:...erver 启动（stdio）:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[10/02/26 18:33:42] INFO     Starting MCP server 'retrieval'   transport.py:241
+                             with transport 'stdio'                            
+[2026-10-02 18:33:58,612] [INFO] [order_server] order-server 启动（stdio）
+[10/02/26 18:33:58] INFO     Starting MCP server 'order' with  transport.py:241
+                             transport 'stdio'                                 
+[2026-10-02 18:33:58,623] [INFO] [mcp.server.lowlevel.server] Processing request of type ListToolsRequest
+[2026-10-02 18:33:58,627] [INFO] [mcp.server.lowlevel.server] Processing request of type ListToolsRequest
+[2026-10-02 18:33:58,650] [INFO] [mcp.server.lowlevel.server] Processing request of type CallToolRequest
+[2026-10-02 18:33:58,654] [INFO] [mcp.server.lowlevel.server] Processing request of type CallToolRequest
+[2026-10-02 18:33:58,658] [INFO] [mcp.server.lowlevel.server] Processing request of type CallToolRequest
+[2026-10-02 18:33:58,663] [INFO] [mcp.server.lowlevel.server] Processing request of type CallToolRequest
+[2026-10-02 18:33:58] [INFO] [chroma:61] 成功加载 106 个有效片段（共 106 条记录）
+--- Logging error ---
+Traceback (most recent call last):
+  File "D:\VSCode-Python\python3\Lib\logging\__init__.py", line 1154, in emit
+    self.flush()
+    ~~~~~~~~~~^^
+  File "D:\VSCode-Python\python3\Lib\logging\__init__.py", line 1136, in flush
+    self.stream.flush()
+    ~~~~~~~~~~~~~~~~~^^
+OSError: [Errno 9] Bad file descriptor
+Call stack:
+  File "D:\VSCode-Python\python3\Lib\threading.py", line 1012, in _bootstrap
+    self._bootstrap_inner()
+  File "D:\VSCode-Python\python3\Lib\threading.py", line 1041, in _bootstrap_inner
+    self.run()
+  File "D:\VSCode-Python\python3\Lib\site-packages\anyio\_backends\_asyncio.py", line 1033, in run
+    result = context.run(func, *args)
+  File "D:\VSCode-Python\python3\Lib\site-packages\pydantic\type_adapter.py", line 441, in validate_python
+    return self.validator.validate_python(
+  File "C:\Users\Administrator\AppData\Roaming\Python\Python313\site-packages\fastmcp\tools\function_tool.py", line 95,
+ in wrapper
+    return fn(*args, **kwargs)
+  File "C:\Users\Administrator\Desktop\langgraph_agent\business.py", line 54, in search_product_knowledge
+    return retriever_factory.search_product_knowledge(query, top_k=min(int(top_k), 8))
+  File "C:\Users\Administrator\Desktop\langgraph_agent\retriever_factory.py", line 67, in search_product_knowledge
+    hybrid = get_hybrid_retriever(use_rerank=use_rerank)
+  File "C:\Users\Administrator\Desktop\langgraph_agent\retriever_factory.py", line 47, in get_hybrid_retriever
+    segments = load_segments(DATA_JSON)
+  File "C:\Users\Administrator\Desktop\langgraph_agent\检索\chroma.py", line 61, in load_segments
+    logger.info("成功加载 %d 个有效片段（共 %d 条记录）", len(valid_segments), len(segments))
+Message: '成功加载 %d 个有效片段（共 %d 条记录）'
+Arguments: (106, 106)
+[2026-10-02 18:33:58] [INFO] [retriever_factory:48] 开始构建索引，共 106 个片段
+--- Logging error ---
+Traceback (most recent call last):
+  File "D:\VSCode-Python\python3\Lib\logging\__init__.py", line 1154, in emit
+    self.flush()
+    ~~~~~~~~~~^^
+  File "D:\VSCode-Python\python3\Lib\logging\__init__.py", line 1136, in flush
+    self.stream.flush()
+    ~~~~~~~~~~~~~~~~~^^
+OSError: [Errno 9] Bad file descriptor
+Call stack:
+  File "D:\VSCode-Python\python3\Lib\threading.py", line 1012, in _bootstrap
+    self._bootstrap_inner()
+  File "D:\VSCode-Python\python3\Lib\threading.py", line 1041, in _bootstrap_inner
+    self.run()
+  File "D:\VSCode-Python\python3\Lib\site-packages\anyio\_backends\_asyncio.py", line 1033, in run
+    result = context.run(func, *args)
+  File "D:\VSCode-Python\python3\Lib\site-packages\pydantic\type_adapter.py", line 441, in validate_python
+    return self.validator.validate_python(
+  File "C:\Users\Administrator\AppData\Roaming\Python\Python313\site-packages\fastmcp\tools\function_tool.py", line 95,
+ in wrapper
+    return fn(*args, **kwargs)
+  File "C:\Users\Administrator\Desktop\langgraph_agent\business.py", line 54, in search_product_knowledge
+    return retriever_factory.search_product_knowledge(query, top_k=min(int(top_k), 8))
+  File "C:\Users\Administrator\Desktop\langgraph_agent\retriever_factory.py", line 67, in search_product_knowledge
+    hybrid = get_hybrid_retriever(use_rerank=use_rerank)
+  File "C:\Users\Administrator\Desktop\langgraph_agent\retriever_factory.py", line 48, in get_hybrid_retriever
+    logger.info("开始构建索引，共 %d 个片段", len(segments))
+Message: '开始构建索引，共 %d 个片段'
+Arguments: (106,)
+Building prefix dict from the default dictionary ...
+[2026-10-02 18:33:58,671] [DEBUG] [jieba] Building prefix dict from the default dictionary ...
+Loading model from cache C:\Users\Administrator\AppData\Local\Temp\jieba.cache
+[2026-10-02 18:33:58,671] [DEBUG] [jieba] Loading model from cache C:\Users\Administrator\AppData\Local\Temp\jieba.cach
+e
+Loading model cost 0.439 seconds.
+[2026-10-02 18:33:59,110] [DEBUG] [jieba] Loading model cost 0.439 seconds.
+Prefix dict has been built successfully.
+[2026-10-02 18:33:59,110] [DEBUG] [jieba] Prefix dict has been built successfully.
+[2026-10-02 18:33:59] [INFO] [bm25:44] BM25 索引构建完成，共 106 篇文档
+--- Logging error ---
+Traceback (most recent call last):
+  File "D:\VSCode-Python\python3\Lib\logging\__init__.py", line 1154, in emit
+    self.flush()
+    ~~~~~~~~~~^^
+  File "D:\VSCode-Python\python3\Lib\logging\__init__.py", line 1136, in flush
+    self.stream.flush()
+    ~~~~~~~~~~~~~~~~~^^
+OSError: [Errno 9] Bad file descriptor
+Call stack:
+  File "D:\VSCode-Python\python3\Lib\threading.py", line 1012, in _bootstrap
+    self._bootstrap_inner()
+  File "D:\VSCode-Python\python3\Lib\threading.py", line 1041, in _bootstrap_inner
+    self.run()
+  File "D:\VSCode-Python\python3\Lib\site-packages\anyio\_backends\_asyncio.py", line 1033, in run
+    result = context.run(func, *args)
+  File "D:\VSCode-Python\python3\Lib\site-packages\pydantic\type_adapter.py", line 441, in validate_python
+    return self.validator.validate_python(
+  File "C:\Users\Administrator\AppData\Roaming\Python\Python313\site-packages\fastmcp\tools\function_tool.py", line 95,
+ in wrapper
+    return fn(*args, **kwargs)
+  File "C:\Users\Administrator\Desktop\langgraph_agent\business.py", line 54, in search_product_knowledge
+    return retriever_factory.search_product_knowledge(query, top_k=min(int(top_k), 8))
+  File "C:\Users\Administrator\Desktop\langgraph_agent\retriever_factory.py", line 67, in search_product_knowledge
+    hybrid = get_hybrid_retriever(use_rerank=use_rerank)
+  File "C:\Users\Administrator\Desktop\langgraph_agent\retriever_factory.py", line 51, in get_hybrid_retriever
+    bm25_retriever = BM25Retriever(documents)
+  File "C:\Users\Administrator\Desktop\langgraph_agent\检索\bm25.py", line 44, in __init__
+    logger.info("BM25 索引构建完成，共 %d 篇文档", len(self.documents))
+Message: 'BM25 索引构建完成，共 %d 篇文档'
+Arguments: (106,)
+[10/02/26 18:33:59] Error calling tool 'search_product_knowledge'              
+                    ┌─────────── Traceback (most recent call last) ───────────┐
+                    │ C:\Users\Administrator\Desktop\langgraph_agent\检索\chr │
+                    │ oma.py:79 in build_chroma_index                         │
+                    │                                                         │
+                    │    76 │                                                 │
+                    │    77 │   # 创建 Chroma 客户端（数据会持久化到 ../chrom │
+                    │    78 │   try:                                          │
+                    │ >  79 │   │   client = chromadb.PersistentClient(path=C │
+                    │    80 │   except Exception as e:                        │
+                    │    81 │   │   raise IndexError_(                        │
+                    │    82 │   │   │   "无法创建 Chroma 客户端（数据库可能被 │
+                    │                                                         │
+                    │ D:\VSCode-Python\python3\Lib\site-packages\chromadb\__i │
+                    │ nit__.py:228 in PersistentClient                        │
+                    │                                                         │
+                    │   225 │   tenant = str(tenant)                          │
+                    │   226 │   database = str(database)                      │
+                    │   227 │                                                 │
+                    │ > 228 │   return ClientCreator(tenant=tenant, database= │
+                    │   229                                                   │
+                    │   230                                                   │
+                    │   231 def RustClient(                                   │
+                    │                                                         │
+                    │                 ... 3 frames hidden ...                 │
+                    │                                                         │
+                    │ D:\VSCode-Python\python3\Lib\site-packages\chromadb\con │
+                    │ fig.py:467 in start                                     │
+                    │                                                         │
+                    │   464 │   def start(self) -> None:                      │
+                    │   465 │   │   super().start()                           │
+                    │   466 │   │   for component in self.components():       │
+                    │ > 467 │   │   │   component.start()                     │
+                    │   468 │                                                 │
+                    │   469 │   @override                                     │
+                    │   470 │   def stop(self) -> None:                       │
+                    │                                                         │
+                    │ D:\VSCode-Python\python3\Lib\site-packages\chromadb\api │
+                    │ \rust.py:122 in start                                   │
+                    │                                                         │
+                    │   119 │   │   │   url=sqlite_persist_path,              │
+                    │   120 │   │   )                                         │
+                    │   121 │   │                                             │
+                    │ > 122 │   │   self.bindings = chromadb_rust_bindings.Bi │
+                    │   123 │   │   │   allow_reset=self._system.settings.req │
+                    │   124 │   │   │   sqlite_db_config=sqlite_config,       │
+                    │   125 │   │   │   persist_path=persist_path,            │
+                    └─────────────────────────────────────────────────────────┘
+                    InternalError: error returned from database: (code: 14)    
+                    unable to open database file                               
+                                                                               
+                    During handling of the above exception, another exception  
+                    occurred:                                                  
+                                                                               
+                    ┌─────────── Traceback (most recent call last) ───────────┐
+                    │ C:\Users\Administrator\AppData\Roaming\Python\Python313 │
+                    │ \site-packages\fastmcp\server\server.py:1312 in         │
+                    │ call_tool                                               │
+                    │                                                         │
+                    │ C:\Users\Administrator\AppData\Roaming\Python\Python313 │
+                    │ \site-packages\fastmcp\tools\base.py:421 in _run        │
+                    │                                                         │
+                    │                ... 10 frames hidden ...                 │
+                    │                                                         │
+                    │ C:\Users\Administrator\Desktop\langgraph_agent\retrieve │
+                    │ r_factory.py:52 in get_hybrid_retriever                 │
+                    │                                                         │
+                    │   49 │   │                                              │
+                    │   50 │   │   documents = [seg["content"] for seg in seg │
+                    │   51 │   │   bm25_retriever = BM25Retriever(documents)  │
+                    │ > 52 │   │   chroma_coll = build_chroma_index(segments) │
+                    │   53 │   │   _hybrid = HybridRetriever(chroma_coll, bm2 │
+                    │   54 │   │                                              │
+                    │   55 │   │   if use_rerank:                             │
+                    │                                                         │
+                    │ C:\Users\Administrator\Desktop\langgraph_agent\检索\chr │
+                    │ oma.py:81 in build_chroma_index                         │
+                    │                                                         │
+                    │    78 │   try:                                          │
+                    │    79 │   │   client = chromadb.PersistentClient(path=C │
+                    │    80 │   except Exception as e:                        │
+                    │ >  81 │   │   raise IndexError_(                        │
+                    │    82 │   │   │   "无法创建 Chroma 客户端（数据库可能被 │
+                    │    83 │   │   │   code="CHROMA_CLIENT_ERROR",           │
+                    │    84 │   │   │   detail=str(e)                         │
+                    └─────────────────────────────────────────────────────────┘
+                    IndexError_: IndexError_ [CHROMA_CLIENT_ERROR] 无法创建    
+                    Chroma 客户端（数据库可能被其他进程锁定）                  
+[verify] 检索服务工具： ['calculate', 'get_product_detail', 'search_product_knowledge']
+[verify] 订单服务工具： ['apply_refund', 'get_logistics', 'get_order_status']
+[verify] 工具描述齐全（非空）
+[verify] calculate = [{'type': 'text', 'text': '3599.1', 'id': 'lc_9d1018dc-f28d-4422-947e-a75125369c17'}]
+[verify] get_product_detail = [{'type': 'text', 'text': '{"id":"P1001","name":"星耀 X1 智能手机","brand":"星耀","categ
+[verify] get_order_status = [{'type': 'text', 'text': '{"found":true,"order_id":"SO20260902002","product_nam
+[verify] search_product_knowledge 跳过：chroma 数据库不可写（沙箱限制），请在本机终端重跑
+[verify] MCP SERVERS PASS
