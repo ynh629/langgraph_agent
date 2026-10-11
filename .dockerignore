@@ -1,0 +1,24 @@
+.git
+.gitignore
+.github
+__pycache__
+*.py[cod]
+.venv
+venv
+
+# 密钥与本地配置（运行时用 --env-file 注入）
+.env
+.env.*
+
+# 运行时产物
+chroma_db
+logs
+eval/reports
+scripts/*_out.txt
+*.log
+*.sqlite3
+
+# 文档与演示资产（镜像内不需要）
+*.md
+docs
+assets

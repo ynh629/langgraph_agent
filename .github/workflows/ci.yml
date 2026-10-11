@@ -1,0 +1,39 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements-v4.txt
+
+      # 以下门禁均不依赖真实 LLM / Chroma，可在 CI 稳定复现
+      - name: Tools & business logic gate
+        run: python scripts/verify_tools_logic.py
+
+      - name: V2 orchestration gate
+        run: python scripts/verify_v2_logic.py
+
+      - name: MCP tool discovery & permission isolation gate
+        run: python scripts/verify_mcp_client.py
+
+      - name: V3 deterministic graph gate
+        run: python scripts/verify_v3_deterministic.py
+
+      # V4 评估体系：agent 编排 + 护栏（RAG 层需 Chroma，CI 中跳过）
+      - name: V4 evaluation gate (agent + guardrail)
+        run: python -m eval.run_eval --layers agent,guardrail

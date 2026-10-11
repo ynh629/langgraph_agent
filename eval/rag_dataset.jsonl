@@ -1,0 +1,12 @@
+{"id": "return_window", "query": "七天无理由退货的起算时间是什么时候？", "expect": ["七天无理由"]}
+{"id": "quality_evidence", "query": "质量问题退货需要提供哪些凭证？", "expect": ["质量问题"]}
+{"id": "exchange_rule", "query": "换货可以换成别的款式吗？", "expect": ["换货"]}
+{"id": "bulky_return", "query": "家电家具这类大件商品怎么退货？", "expect": ["大件商品"]}
+{"id": "cross_border", "query": "跨境保税商品支持七天无理由退货吗？", "expect": ["跨境商品"]}
+{"id": "fresh_food", "query": "生鲜食品变质了怎么申请退款？", "expect": ["生鲜商品"]}
+{"id": "beauty_return", "query": "美妆护肤类拆封后还能退货吗？", "expect": ["美妆个护"]}
+{"id": "apparel_return", "query": "服饰鞋包退货需要注意吊牌吗？", "expect": ["服饰鞋包"]}
+{"id": "digital_return", "query": "手机平板激活后还支持七天无理由吗？", "expect": ["3C数码"]}
+{"id": "price_protection", "query": "价格保护的有效期是多久？", "expect": ["价保期限", "价格保护"]}
+{"id": "price_diff", "query": "价保的差价是怎么计算的？", "expect": ["差价计算"]}
+{"id": "price_coupon", "query": "用了优惠券的商品还能申请价保吗？", "expect": ["价保与优惠券"]}

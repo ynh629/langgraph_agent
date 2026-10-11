@@ -1,0 +1,9 @@
+# V4 新增依赖（V1~V3 依赖见 requirements.txt）
+fastmcp
+langchain-mcp-adapters
+fastapi
+uvicorn[standard]
+httpx
+pydantic
+# 可选：自托管可观测性（不装也能跑，tracing 会退化为本地 JSONL）
+# langfuse

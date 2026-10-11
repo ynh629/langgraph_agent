@@ -18,3 +18,7 @@ scripts/*_out.txt
 
 # Chroma 向量库（运行时生成，不入库）
 rag_system/chroma_db/
+
+# 评估报告与追踪产物
+eval/reports/
+logs/traces/
