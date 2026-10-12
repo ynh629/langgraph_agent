@@ -107,6 +107,15 @@ def check_refund():
 
 
 def main():
+    # 先重置运行态订单数据：本脚本对订单「初始状态」有断言，
+    # 若不重置，验证结果就依赖上一次运行遗留的 data/ecommerce_orders.json。
+    # CI 是全新检出，一旦该文件曾被演示/烟测写过（脏数据），门禁就会误报失败。
+    # 确定性门禁必须自证初始态，不能依赖工作区文件。
+    count = order_store.reset_orders()
+    print("=" * 64)
+    print(f"已重置订单数据（{count} 条），开始确定性验证")
+    print("=" * 64)
+
     check_policy()
     check_order_query()
     check_refund()
