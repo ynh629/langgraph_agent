@@ -16,6 +16,10 @@ venv/
 *.log
 scripts/*_out.txt
 
+# 订单「运行态」文件：演示与门禁（退款）会写回，不入库
+# 初始模板见 data/ecommerce_orders.seed.json（只读，不修改）
+data/ecommerce_orders.json
+
 # Chroma 向量库（运行时生成，不入库）
 rag_system/chroma_db/
 
