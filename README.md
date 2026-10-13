@@ -238,7 +238,7 @@ python -m eval.run_eval --layers agent,guardrail   # V4 评估门禁
 
 ---
 
-## 十二、面试问答
+## 十二、设计决策与 FAQ
 
 见 [docs/interview_qa.md](docs/interview_qa.md)。
 
