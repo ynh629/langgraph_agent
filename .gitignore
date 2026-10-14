@@ -21,6 +21,7 @@ scripts/*_out.txt
 data/ecommerce_orders.json
 
 # Chroma 向量库（运行时生成，不入库）
+chroma_db/
 rag_system/chroma_db/
 
 # 评估报告与追踪产物
