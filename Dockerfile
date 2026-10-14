@@ -17,9 +17,9 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # 先装依赖，利用镜像层缓存
-COPY requirements.txt requirements-v4.txt ./
+COPY requirements.txt ./
 RUN pip install --upgrade pip \
-    && pip install -r requirements.txt -r requirements-v4.txt
+    && pip install -r requirements.txt
 
 COPY . .
 

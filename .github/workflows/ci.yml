@@ -19,7 +19,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install -r requirements-v4.txt
 
       # 以下门禁均不依赖真实 LLM / Chroma，可在 CI 稳定复现
       - name: Tools & business logic gate

@@ -100,7 +100,7 @@ langgraph_agent/
 ### 1. 安装依赖
 
 ```bash
-pip install -r requirements.txt -r requirements-v4.txt
+pip install -r requirements.txt
 ```
 
 ### 2. 配置环境变量
