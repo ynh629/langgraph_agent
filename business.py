@@ -3,7 +3,7 @@ business.py
 ===========
 电商客服的【业务能力层】：纯 Python 实现，不依赖 langchain / langgraph / mcp。
 
-为什么单独一层（面试可讲）：
+为什么单独一层：
   - 工具（tool）只是业务能力对外的「适配器」。LangChain 的 @tool 与 MCP 的
     mcp.tool 是两种绑定方式，但底层调用的是同一批业务函数；
   - 业务逻辑与框架解耦后，既能被 V1/V2 的进程内 Agent 调用，也能被 V3 的
