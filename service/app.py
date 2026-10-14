@@ -6,6 +6,7 @@ V4 最小可演示部署：FastAPI 暴露 V3 多智能体能力，含 SSE 流式
 
 接口：
   GET  /ok           健康检查（含工具数与 LLM 配置的就绪状态）
+  GET  /tools        列出各专员可用的 MCP 工具（按售前/售后分组，含名称与说明）
   GET  /             轻量演示页（表单 + 流式输出）
   POST /chat         一次问答（非流式），返回最终答复 + trace 摘要
   POST /chat/stream  SSE 流式：逐节点推送路由/工具/回答，最后推送 answer 与 trace
@@ -178,6 +179,44 @@ async def ok() -> dict:
         "status": "ok" if ready else "starting",
         "tools": len(runtime.hub.all_tools) if ready else 0,
         "llm_model": os.getenv("LLM_MODEL", "deepseek-flash"),
+    }
+
+
+# 工具的中文展示名（英文名是机器标识，前端展示用中文；未登记的原样显示英文名）
+_TOOL_LABELS = {
+    "search_product_knowledge": "知识检索（商品/售后政策）",
+    "get_product_detail": "商品详情查询",
+    "calculate": "计算器（价格/折扣）",
+    "get_order_status": "订单状态查询",
+    "get_logistics": "物流轨迹查询",
+    "apply_refund": "提交退款",
+}
+
+
+@app.get("/tools")
+async def tools() -> dict:
+    """列出各专员可用的 MCP 工具，按「售前 / 售后」分组（中文名 + 说明）。"""
+    runtime: Runtime = getattr(app.state, "runtime", None)
+    if runtime is None:
+        return {"ready": False, "presale": [], "aftersale": []}
+
+    def _describe(items) -> list:
+        out = []
+        for t in items:
+            name = getattr(t, "name", "")
+            out.append(
+                {
+                    "name": name,
+                    "label": _TOOL_LABELS.get(name, name),
+                    "description": (getattr(t, "description", "") or "").strip(),
+                }
+            )
+        return out
+
+    return {
+        "ready": True,
+        "presale": _describe(runtime.hub.presale_tools),
+        "aftersale": _describe(runtime.hub.aftersale_tools),
     }
 
 

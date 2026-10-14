@@ -3,98 +3,305 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>V4 电商客服多智能体演示</title>
+<title>电商客服多智能体</title>
 <style>
-  :root { --bg:#0f1115; --panel:#171a21; --line:#262b36; --fg:#e6e9ef; --muted:#8b93a7; --accent:#4f8cff; --ok:#3fb950; --warn:#d29922; }
+  :root {
+    --bg:#ffffff; --sidebar:#f9f9fa; --line:#ececee; --line-2:#f1f2f4;
+    --fg:#20242b; --muted:#8b9099; --accent:#4d6bfe; --accent-weak:#eef1ff;
+    --ok:#2ea043; --warn:#b7791f; --block:#d4382b; --radius:12px;
+  }
   * { box-sizing: border-box; }
-  body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.6 "Segoe UI",system-ui,sans-serif; }
-  header { padding:16px 24px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:12px; }
-  header h1 { font-size:16px; margin:0; font-weight:600; }
-  .badge { font-size:12px; color:var(--muted); border:1px solid var(--line); border-radius:999px; padding:2px 10px; }
-  main { max-width:920px; margin:0 auto; padding:20px 24px 60px; }
-  .row { display:flex; gap:8px; margin-bottom:12px; }
-  input, textarea, button { font:inherit; border-radius:8px; border:1px solid var(--line); background:var(--panel); color:var(--fg); padding:10px 12px; }
-  textarea { width:100%; min-height:80px; resize:vertical; }
-  input { flex:0 0 140px; }
-  button { cursor:pointer; background:var(--accent); border-color:var(--accent); color:#fff; font-weight:600; }
-  button.ghost { background:transparent; color:var(--fg); border-color:var(--line); }
-  button:disabled { opacity:.5; cursor:not-allowed; }
-  #log { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px 14px; min-height:220px; white-space:pre-wrap; font-family:ui-monospace,Consolas,monospace; font-size:13px; }
-  .node { color:var(--muted); }
-  .node b { color:var(--fg); font-weight:600; }
-  .intent { color:var(--accent); }
-  .tool { color:var(--warn); }
-  .answer { color:var(--ok); }
-  .blocked { color:#f85149; }
-  #approval { display:none; gap:8px; margin:12px 0; }
-  #trace { margin-top:12px; color:var(--muted); font-size:12px; white-space:pre-wrap; }
+  html, body { height:100%; }
+  body {
+    margin:0; background:var(--bg); color:var(--fg);
+    font:15px/1.65 "Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  }
+  #app { display:flex; height:100vh; overflow:hidden; }
+
+  /* ---------------- 侧边栏 ---------------- */
+  #sidebar {
+    width:260px; flex:0 0 260px; background:var(--sidebar);
+    border-right:1px solid var(--line); display:flex; flex-direction:column;
+  }
+  .brand { display:flex; align-items:center; gap:10px; padding:16px 16px 12px; }
+  .logo {
+    width:26px; height:26px; border-radius:8px; background:var(--accent); color:#fff;
+    display:grid; place-items:center; font-size:14px; font-weight:700;
+  }
+  .brand-name { font-size:14px; font-weight:600; }
+  .new-chat {
+    margin:6px 12px 10px; padding:10px 12px; border:1px solid var(--line);
+    background:#fff; color:var(--fg); border-radius:10px; cursor:pointer;
+    font:inherit; font-weight:600; text-align:left; transition:.15s;
+  }
+  .new-chat:hover { background:var(--accent-weak); border-color:#d9e0ff; }
+  .conv-list { flex:1; overflow-y:auto; padding:4px 8px 12px; }
+  .conv {
+    display:flex; align-items:center; gap:8px; padding:9px 10px; margin:2px 0;
+    border-radius:10px; cursor:pointer; color:#3b4048; font-size:13.5px; transition:.12s;
+  }
+  .conv:hover { background:#f0f1f4; }
+  .conv.active { background:var(--accent-weak); color:var(--accent); font-weight:600; }
+  .conv-title { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .conv-del {
+    border:none; background:transparent; color:var(--muted); cursor:pointer;
+    font-size:15px; line-height:1; padding:2px 4px; border-radius:6px; opacity:0; transition:.12s;
+  }
+  .conv:hover .conv-del { opacity:1; }
+  .conv-del:hover { background:#e6e7ea; color:var(--block); }
+  .side-foot {
+    border-top:1px solid var(--line); padding:12px; display:flex;
+    align-items:center; gap:8px; font-size:12px; color:var(--muted);
+  }
+  .tools { border-top:1px solid var(--line); padding:8px 12px 4px; }
+  .tools-head {
+    width:100%; display:flex; align-items:center; justify-content:space-between;
+    border:none; background:transparent; cursor:pointer; color:var(--muted);
+    font:inherit; font-size:12.5px; padding:6px 2px; border-radius:8px;
+  }
+  .tools-head:hover { color:var(--accent); }
+  .tools-count { border:1px solid var(--line); border-radius:999px; padding:0 8px; background:#fff; color:var(--fg); }
+  .tools-body { padding:2px 2px 10px; max-height:240px; overflow-y:auto; }
+  .tool-group-title { font-size:11.5px; color:var(--muted); margin:8px 2px 4px; }
+  .tool-item {
+    font-size:12.5px; color:#3b4048; padding:4px 9px; border-radius:8px; background:#fff;
+    border:1px solid var(--line); margin:3px 0; overflow:hidden;
+    text-overflow:ellipsis; white-space:nowrap; cursor:default;
+  }
+  .tool-item:hover { border-color:#c9d3ff; }
+  .side-foot input {
+    flex:1; min-width:0; padding:6px 8px; border:1px solid var(--line);
+    border-radius:8px; background:#fff; color:var(--fg); font:inherit; font-size:12px;
+  }
+  .badge { white-space:nowrap; border:1px solid var(--line); border-radius:999px; padding:2px 8px; background:#fff; }
+
+  /* ---------------- 主区域 ---------------- */
+  #main { flex:1; display:flex; flex-direction:column; min-width:0; }
+  .messages { flex:1; overflow-y:auto; padding:28px 0 12px; }
+  .msg { max-width:780px; margin:0 auto; padding:0 24px; display:flex; gap:12px; margin-bottom:22px; }
+  .msg.user { justify-content:flex-end; }
+  .avatar {
+    flex:0 0 30px; width:30px; height:30px; border-radius:8px; display:grid;
+    place-items:center; font-size:12px; font-weight:700;
+  }
+  .msg.assistant .avatar { background:var(--accent); color:#fff; }
+  .msg.user .avatar { background:#e9eaee; color:#5b6068; }
+  .body { min-width:0; max-width:100%; }
+  .msg.user .body { order:-1; }
+  .content { white-space:pre-wrap; word-break:break-word; }
+  .msg.user .content {
+    background:var(--accent-weak); border-radius:14px 14px 4px 14px; padding:10px 14px; display:inline-block;
+  }
+  .content.blocked { color:var(--block); }
+  .trace-toggle {
+    border:none; background:transparent; color:var(--muted); cursor:pointer;
+    font:inherit; font-size:12.5px; padding:2px 0 6px;
+  }
+  .trace-toggle:hover { color:var(--accent); }
+  .trace-body {
+    background:var(--sidebar); border:1px solid var(--line); border-radius:10px;
+    padding:10px 12px; margin:2px 0 10px; font:12.5px/1.7 ui-monospace,Consolas,monospace; color:#4b5158;
+  }
+  .typing { display:inline-block; width:7px; height:15px; background:var(--accent); animation:blink 1s steps(1) infinite; vertical-align:-2px; }
+  @keyframes blink { 50% { opacity:0; } }
+  .empty { height:100%; display:grid; place-content:center; text-align:center; color:var(--muted); gap:6px; }
+  .empty b { color:var(--fg); font-size:17px; }
+
+  /* ---------------- 输入区 ---------------- */
+  .approval {
+    max-width:780px; margin:0 auto 8px; padding:0 24px; display:flex; align-items:center; gap:10px;
+  }
+  .approval span { color:var(--warn); font-size:13px; }
+  .composer {
+    max-width:780px; width:100%; margin:0 auto; padding:0 24px 22px;
+    display:flex; gap:10px; align-items:flex-end;
+  }
+  .composer textarea {
+    flex:1; resize:none; max-height:180px; padding:12px 14px; border:1px solid var(--line);
+    border-radius:14px; background:#fff; color:var(--fg); font:inherit; line-height:1.6; outline:none; transition:.15s;
+  }
+  .composer textarea:focus { border-color:#c9d3ff; box-shadow:0 0 0 3px rgba(77,107,254,.1); }
+  button.send {
+    flex:0 0 auto; padding:11px 20px; border:none; border-radius:12px; background:var(--accent);
+    color:#fff; font:inherit; font-weight:600; cursor:pointer; transition:.15s;
+  }
+  button.send:hover { background:#3f5bf0; }
+  button.send:disabled { opacity:.45; cursor:not-allowed; }
+  button.ghost {
+    padding:7px 14px; border:1px solid var(--line); background:#fff; color:var(--fg);
+    border-radius:10px; cursor:pointer; font:inherit; font-weight:600;
+  }
+  button.ghost:hover { background:#f4f5f7; }
+
+  .messages::-webkit-scrollbar, .conv-list::-webkit-scrollbar { width:8px; }
+  .messages::-webkit-scrollbar-thumb, .conv-list::-webkit-scrollbar-thumb { background:#dfe1e6; border-radius:8px; }
+
+  @media (max-width:760px) { #sidebar { display:none; } }
 </style>
 </head>
 <body>
-<header>
-  <h1>V4 电商客服多智能体</h1>
-  <span class="badge">LangGraph + MCP</span>
-  <span class="badge" id="health">检查中…</span>
-</header>
-<main>
-  <div class="row">
-    <input id="uid" value="U001" placeholder="user_id" />
-    <input id="tid" placeholder="thread_id（留空自动生成）" />
-  </div>
-  <textarea id="msg" placeholder="例如：订单 SO20260902002 的牛奶变质了，请帮我退款 59.9 元。"></textarea>
-  <div class="row" style="margin-top:12px">
-    <button id="send">发送</button>
-    <button id="clear" class="ghost">清空</button>
-  </div>
-  <div id="approval">
-    <span style="align-self:center;color:var(--warn)">检测到需人工审批：</span>
-    <button id="approve">批准</button>
-    <button id="reject" class="ghost">驳回</button>
-  </div>
-  <div id="log"></div>
-  <div id="trace"></div>
-</main>
+<div id="app">
+  <aside id="sidebar">
+    <div class="brand"><span class="logo">客</span><span class="brand-name">电商客服多智能体</span></div>
+    <button id="newChat" class="new-chat">＋ 新对话</button>
+    <div id="convList" class="conv-list"></div>
+    <div class="tools">
+      <button class="tools-head" id="toolsHead">
+        <span>可用工具</span><span class="tools-count" id="toolsCount">—</span>
+      </button>
+      <div class="tools-body" id="toolsBody" style="display:none"></div>
+    </div>
+    <div class="side-foot">
+      <input id="uid" value="U001" title="user_id（决定长期记忆所属用户）" />
+      <span class="badge" id="health">检查中…</span>
+    </div>
+  </aside>
+
+  <main id="main">
+    <div id="messages" class="messages"></div>
+    <div id="approval" class="approval" style="display:none">
+      <span>检测到需人工审批</span>
+      <button id="approve" class="ghost">批准</button>
+      <button id="reject" class="ghost">驳回</button>
+    </div>
+    <div class="composer">
+      <textarea id="msg" rows="1" placeholder="给电商客服发消息…（Enter 发送，Shift+Enter 换行）"></textarea>
+      <button id="send" class="send">发送</button>
+    </div>
+  </main>
+</div>
+
 <script>
 const $ = (id) => document.getElementById(id);
-let threadId = null;
+const LS_KEY = "ecom-agent-chat-v1";
 
-function line(html, cls) {
-  const div = document.createElement("div");
-  div.className = cls || "";
-  div.innerHTML = html;
-  $("log").appendChild(div);
-  $("log").scrollTop = $("log").scrollHeight;
-}
+// ---------- 会话状态（本地持久化，保证刷新后仍在）----------
+let state = { conversations: [], activeId: null };
+let streaming = false;
 
-async function checkHealth() {
+function load() {
   try {
-    const r = await fetch("/ok");
-    const d = await r.json();
-    $("health").textContent = `服务 ${d.status}｜工具 ${d.tools}`;
-  } catch (e) { $("health").textContent = "服务不可用"; }
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) {
+      const data = JSON.parse(raw);
+      if (data && Array.isArray(data.conversations)) state = data;
+    }
+  } catch (e) { /* 损坏的本地数据忽略 */ }
+}
+function save() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) {}
+}
+function rid() { return Math.random().toString(36).slice(2, 10); }
+function active() { return state.conversations.find((c) => c.id === state.activeId) || null; }
+
+function newConversation() {
+  const cur = active();
+  if (cur && cur.messages.length === 0) return cur;      // 已有空会话则复用，避免堆积
+  const conv = { id: rid(), threadId: null, title: "新对话", messages: [], pending: null, createdAt: Date.now() };
+  state.conversations.unshift(conv);
+  state.activeId = conv.id;
+  return conv;
+}
+function deleteConversation(id) {
+  state.conversations = state.conversations.filter((c) => c.id !== id);
+  if (state.activeId === id) state.activeId = state.conversations[0] ? state.conversations[0].id : null;
+  if (!state.conversations.length) newConversation();
+  render(); save();
 }
 
-function renderEvent(ev) {
-  if (ev.type === "start") { threadId = ev.thread_id; $("tid").value = threadId; return; }
-  if (ev.type === "interrupt") { $("approval").style.display = "flex"; line(`⏸ 人工审批：${ev.data.question || JSON.stringify(ev.data)}`, "node"); return; }
-  if (ev.type === "blocked") { line(`⛔ 输入被护栏拦截（${ev.category}）`, "blocked"); return; }
-  if (ev.type === "answer") {
-    line(`\n✅ 最终答复：${ev.answer}`, "answer");
-    if (ev.trace) $("trace").textContent = "trace：" + JSON.stringify(ev.trace, null, 2);
+// ---------- 渲染 ----------
+function render() { renderSidebar(); renderMessages(); renderApproval(); }
+
+function renderSidebar() {
+  const list = $("convList");
+  list.textContent = "";
+  for (const conv of state.conversations) {
+    const item = document.createElement("div");
+    item.className = "conv" + (conv.id === state.activeId ? " active" : "");
+    const title = document.createElement("div");
+    title.className = "conv-title";
+    title.textContent = conv.title;
+    const del = document.createElement("button");
+    del.className = "conv-del";
+    del.textContent = "×";
+    del.title = "删除对话";
+    del.onclick = (e) => { e.stopPropagation(); deleteConversation(conv.id); };
+    item.append(title, del);
+    item.onclick = () => { state.activeId = conv.id; render(); save(); };
+    list.appendChild(item);
+  }
+}
+
+function messageEl(m) {
+  const wrap = document.createElement("div");
+  wrap.className = "msg " + m.role;
+  const avatar = document.createElement("div");
+  avatar.className = "avatar";
+  avatar.textContent = m.role === "user" ? "我" : "AI";
+  const body = document.createElement("div");
+  body.className = "body";
+
+  if (m.trace && m.trace.length) {
+    const toggle = document.createElement("button");
+    toggle.className = "trace-toggle";
+    toggle.textContent = (m.open ? "▾ " : "▸ ") + `执行轨迹（${m.trace.length}）`;
+    toggle.onclick = () => { m.open = !m.open; renderMessages(); };
+    body.appendChild(toggle);
+    if (m.open) {
+      const box = document.createElement("div");
+      box.className = "trace-body";
+      m.trace.forEach((line) => {
+        const d = document.createElement("div");
+        d.textContent = line;
+        box.appendChild(d);
+      });
+      body.appendChild(box);
+    }
+  }
+
+  const content = document.createElement("div");
+  content.className = "content" + (m.blocked ? " blocked" : "");
+  if (m.streaming && !m.content) {
+    const caret = document.createElement("span");
+    caret.className = "typing";
+    content.appendChild(caret);
+  } else {
+    content.textContent = m.content || "";
+  }
+  body.appendChild(content);
+
+  wrap.append(avatar, body);
+  return wrap;
+}
+
+function renderMessages() {
+  const box = $("messages");
+  box.textContent = "";
+  const conv = active();
+  if (!conv || !conv.messages.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.innerHTML = "<b>开始新的对话</b><span>试试：“星耀 X1 打 9 折多少钱？” 或 “订单 SO20260902002 帮我退款”</span>";
+    box.appendChild(empty);
     return;
   }
-  if (ev.type === "node") {
-    if (ev.intent) line(`[supervisor] 路由 → ${ev.intent}`, "node intent");
-    (ev.messages || []).forEach(m => {
-      if (m.tool_calls) line(`[${ev.node}] 调用工具：${m.tool_calls.map(c => c.name).join(", ")}`, "tool");
-      else if (m.content && ev.node !== "supervisor") line(`[${ev.node}] ${m.content.slice(0, 200)}`, "node");
-    });
-    if (ev.approval_note) line(`[approval] ${ev.approval_note}`, "node");
-  }
+  conv.messages.forEach((m) => box.appendChild(messageEl(m)));
+  box.scrollTop = box.scrollHeight;
 }
 
-async function stream(url, body) {
-  const resp = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+function renderApproval() {
+  const conv = active();
+  $("approval").style.display = conv && conv.pending ? "flex" : "none";
+}
+
+// ---------- SSE 解析 ----------
+async function streamEvents(url, body, onEvent) {
+  const resp = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!resp.ok || !resp.body) throw new Error("HTTP " + resp.status);
   const reader = resp.body.getReader();
   const decoder = new TextDecoder();
   let buf = "";
@@ -105,37 +312,169 @@ async function stream(url, body) {
     const parts = buf.split("\n\n");
     buf = parts.pop();
     for (const part of parts) {
-      const dataLine = part.split("\n").find(l => l.startsWith("data: "));
-      if (!dataLine) continue;
-      const raw = dataLine.slice(6);
+      const line = part.split("\n").find((l) => l.startsWith("data: "));
+      if (!line) continue;
+      const raw = line.slice(6);
       if (raw === "[DONE]") return;
-      try { renderEvent(JSON.parse(raw)); } catch (e) {}
+      try { onEvent(JSON.parse(raw)); } catch (e) {}
     }
   }
 }
 
-$("send").onclick = async () => {
-  const message = $("msg").value.trim();
-  if (!message) return;
-  $("log").innerHTML = ""; $("trace").textContent = "";
-  $("approval").style.display = "none";
-  line(`👤 用户：${message}`, "node");
-  await stream("/chat/stream", { message, user_id: $("uid").value || "U001" });
-};
+// ---------- 发送 ----------
+async function send() {
+  if (streaming) return;
+  const text = $("msg").value.trim();
+  if (!text) return;
 
-$("approve").onclick = () => decide("approve");
-$("reject").onclick = () => decide("reject");
+  const conv = active() || newConversation();
+  conv.messages.push({ role: "user", content: text });
+  if (conv.title === "新对话") conv.title = text.slice(0, 18) + (text.length > 18 ? "…" : "");
 
-async function decide(decision) {
-  $("approval").style.display = "none";
-  const resp = await fetch("/resume", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ thread_id: threadId, decision }) });
-  const d = await resp.json();
-  line(`🧑⚖️ 人工${decision === "approve" ? "批准" : "驳回"} → ${d.answer}`, "answer");
-  if (d.trace) $("trace").textContent = "trace：" + JSON.stringify(d.trace, null, 2);
+  const reply = { role: "assistant", content: "", trace: [], open: false, streaming: true };
+  conv.messages.push(reply);
+  $("msg").value = "";
+  streaming = true;
+  render(); save();
+
+  try {
+    await streamEvents(
+      "/chat/stream",
+      { message: text, user_id: $("uid").value.trim() || "U001", thread_id: conv.threadId },
+      (ev) => handleEvent(conv, reply, ev)
+    );
+  } catch (e) {
+    reply.content = "（服务连接失败：" + e.message + "）";
+  } finally {
+    reply.streaming = false;
+    streaming = false;
+    render(); save();
+  }
 }
 
-$("clear").onclick = () => { $("log").innerHTML = ""; $("trace").textContent = ""; $("approval").style.display = "none"; };
+function handleEvent(conv, reply, ev) {
+  if (ev.type === "start") {
+    conv.threadId = ev.thread_id;            // 记住服务端会话 id，后续轮次复用 → 连续对话
+  } else if (ev.type === "blocked") {
+    reply.blocked = true;
+    reply.trace.push("⛔ 输入被护栏拦截：" + (ev.category || ""));
+  } else if (ev.type === "interrupt") {
+    conv.pending = { threadId: conv.threadId, data: ev.data };
+    reply.trace.push("⏸ 人工审批：" + ((ev.data && ev.data.question) || ""));
+  } else if (ev.type === "node") {
+    if (ev.intent) reply.trace.push("supervisor → " + ev.intent);
+    (ev.messages || []).forEach((m) => {
+      if (m.tool_calls) reply.trace.push(`[${ev.node}] 调用工具：${m.tool_calls.map((c) => c.name).join(", ")}`);
+      else if (m.content && ev.node !== "supervisor") reply.trace.push(`[${ev.node}] ${String(m.content).slice(0, 120)}`);
+    });
+    if (ev.approval_note) reply.trace.push("[approval] " + ev.approval_note);
+  } else if (ev.type === "answer") {
+    reply.content = ev.answer || "";
+    if (ev.pii_masked && ev.pii_masked.length) reply.trace.push("输出 PII 脱敏 " + ev.pii_masked.length + " 处");
+    if (ev.trace && ev.trace.total_tokens != null) {
+      reply.trace.push(`本次 token ${ev.trace.total_tokens} · 估算成本 ¥${ev.trace.cost_yuan}`);
+    }
+  }
+  render();
+}
+
+// ---------- 审批恢复 ----------
+async function decide(decision) {
+  const conv = active();
+  if (!conv || !conv.pending || streaming) return;
+  conv.pending = null;
+  render();
+
+  const reply = { role: "assistant", content: "", trace: [], open: false, streaming: true };
+  conv.messages.push(reply);
+  streaming = true;
+  render();
+
+  try {
+    const resp = await fetch("/resume", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ thread_id: conv.threadId, decision }),
+    });
+    const data = await resp.json();
+    reply.content = data.answer || "";
+    reply.trace.push("人工" + (decision === "approve" ? "批准" : "驳回"));
+    if (data.interrupted && data.interrupt) conv.pending = { threadId: conv.threadId, data: data.interrupt };
+  } catch (e) {
+    reply.content = "（恢复失败：" + e.message + "）";
+  } finally {
+    reply.streaming = false;
+    streaming = false;
+    render(); save();
+  }
+}
+
+// ---------- 事件绑定 ----------
+$("send").onclick = send;
+$("approve").onclick = () => decide("approve");
+$("reject").onclick = () => decide("reject");
+$("newChat").onclick = () => { newConversation(); render(); save(); $("msg").focus(); };
+$("toolsHead").onclick = () => {
+  const body = $("toolsBody");
+  body.style.display = body.style.display === "none" ? "block" : "none";
+};
+$("msg").addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); }
+});
+$("msg").addEventListener("input", (e) => {
+  e.target.style.height = "auto";
+  e.target.style.height = Math.min(e.target.scrollHeight, 180) + "px";
+});
+
+async function checkHealth() {
+  try {
+    const resp = await fetch("/ok");
+    const data = await resp.json();
+    $("health").textContent = `服务 ${data.status}｜工具 ${data.tools}`;
+  } catch (e) {
+    $("health").textContent = "服务不可用";
+  }
+}
+
+async function loadTools() {
+  try {
+    const resp = await fetch("/tools");
+    const data = await resp.json();
+    if (!data.ready) { $("toolsCount").textContent = "—"; return; }
+    const groups = [["售前专员", data.presale || []], ["售后专员", data.aftersale || []]];
+    const unique = new Set(groups.flatMap(([, list]) => list.map((t) => t.name)));
+    $("toolsCount").textContent = unique.size;
+    const body = $("toolsBody");
+    body.textContent = "";
+    for (const [label, list] of groups) {
+      const group = document.createElement("div");
+      group.className = "tool-group";
+      const title = document.createElement("div");
+      title.className = "tool-group-title";
+      title.textContent = `${label} · ${list.length}`;
+      group.appendChild(title);
+      list.forEach((tool) => {
+        const item = document.createElement("div");
+        item.className = "tool-item";
+        item.textContent = tool.label || tool.name;                    // 中文展示名
+        item.title = tool.description ? `${tool.name}｜${tool.description}` : tool.name;  // 悬浮：英文标识 + 说明
+        group.appendChild(item);
+      });
+      body.appendChild(group);
+    }
+  } catch (e) {
+    $("toolsCount").textContent = "—";
+  }
+}
+
+// ---------- 初始化 ----------
+load();
+if (!state.conversations.length) newConversation();
+if (!active()) state.activeId = state.conversations[0].id;
+render();
 checkHealth();
+loadTools();
+$("msg").focus();
 </script>
 </body>
 </html>

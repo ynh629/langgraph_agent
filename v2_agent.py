@@ -91,15 +91,16 @@ class AgentState(MessagesState):
 # ============================================================
 # 3. Supervisor：意图识别 + 路由（Command handoff）
 # ============================================================
-SUPERVISOR_PROMPT = """你是电商客服系统的总控路由，负责把用户请求分派给合适的专员。
+SUPERVISOR_PROMPT = """你是电商客服系统的总控路由，负责把「用户当前这句话」分派给合适的专员。
 
-可选目标（只输出其中一个词，不要输出解释）：
+可选目标（只输出其中一个词，不要输出任何解释）：
 - product_advisor：售前咨询，包括商品参数、价格、库存、优惠券、是否支持退换等
 - after_sales：售后处理，包括查订单、查物流、申请退款、退换货政策纠纷
 - ticket：用户要求生成工单，或需要对本次会话做质检总结
-- FINISH：用户问题已被完整回答，无需再分派
 
-判断依据是【最后一条用户消息】。若最近已有专员给出完整答复，输出 FINISH。
+规则：
+1. 只依据【最后一条用户消息】判断；用户再次提问（如“那如果打 9 折呢？”）也是新诉求，需照常分派；
+2. 你只负责从上述三者中选一个，不要输出 FINISH —— 本轮是否结束，由系统根据专员是否已给出最终答复自动判定。
 """
 
 _ROUTES = ("product_advisor", "after_sales", "ticket", "FINISH")
@@ -113,9 +114,28 @@ def _parse_route(text: str) -> str:
     return "FINISH"
 
 
+def _fallback_route(message) -> str:
+    """模型未给出有效路由（含误输出 FINISH）时的确定性兜底。
+
+    进入此处说明「最后一条是用户的新发言」，本轮必须分派给某位专员，绝不能空结束。
+    """
+    text = message.content if isinstance(message.content, str) else str(message.content)
+    if any(k in text for k in ("订单", "物流", "退款", "退货", "换货", "售后", "发票")):
+        return "after_sales"
+    if any(k in text for k in ("工单", "质检", "总结", "投诉")):
+        return "ticket"
+    return "product_advisor"
+
+
 def supervisor(state: AgentState, *, store) -> Command:
     turns = int(state.get("turns") or 0) + 1
     if turns > MAX_SUPERVISOR_TURNS:
+        return Command(goto=END, update={"intent": "finish", "turns": turns})
+
+    last = state["messages"][-1]
+    # 确定性结束：最后一条已是专员的最终答复（无工具调用）→ 本轮完成。
+    # 不把「是否结束」交给 LLM 判断，避免多轮追问时被误判为 FINISH。
+    if isinstance(last, AIMessage) and not (getattr(last, "tool_calls", None) or []):
         return Command(goto=END, update={"intent": "finish", "turns": turns})
 
     # 长期记忆：读取用户画像，注入路由上下文
@@ -132,8 +152,9 @@ def supervisor(state: AgentState, *, store) -> Command:
     content = response.content if isinstance(response.content, str) else str(response.content)
     route = _parse_route(content)
 
+    # 用户刚发言，必须分派；模型若误输出 FINISH/无法识别，用关键词确定性兜底。
     if route == "FINISH":
-        return Command(goto=END, update={"intent": "finish", "turns": turns})
+        route = _fallback_route(last)
     return Command(goto=route, update={"intent": route, "turns": turns})
 
 
