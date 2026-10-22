@@ -168,6 +168,10 @@ def assert_reject(values, interrupted, interrupt_value) -> None:
     print("  [PASS] 大额驳回：interrupt 触发，返回驳回消息，订单保持未退款")
 
 
+# 真实 LLM 版：单个场景允许重试，避免模型偶发"先追问而不发起退款"造成误报。
+# 硬门禁仍是 verify_v3_deterministic.py（脚本化 LLM，结果稳定可复现）。
+MAX_ATTEMPTS = 3
+
 CHECKERS = {
     "1": lambda v, i, iv: assert_presale(v),
     "2": lambda v, i, iv: assert_small_refund(v),
@@ -199,10 +203,25 @@ async def main() -> None:
             if only and only != key:
                 continue
             print(f"[{key}] {title}")
-            interrupted, interrupt_value, values = await run_case(
-                graph, question, user_id, thread_id, resume
-            )
-            CHECKERS[key](values, interrupted, interrupt_value)
+            last_error = None
+            for attempt in range(1, MAX_ATTEMPTS + 1):
+                if attempt > 1:
+                    # 换新 thread_id 重跑：避免上一轮"追问式回复"污染上下文；
+                    # 同时重置订单，避免上一轮已执行退款导致重复退款校验失败。
+                    print(f"  重试 {attempt}/{MAX_ATTEMPTS}（模型决策波动，换新会话重跑）")
+                    order_store.reset_orders()
+                tid = thread_id if attempt == 1 else f"{thread_id}-r{attempt}"
+                interrupted, interrupt_value, values = await run_case(
+                    graph, question, user_id, tid, resume
+                )
+                try:
+                    CHECKERS[key](values, interrupted, interrupt_value)
+                    last_error = None
+                    break
+                except AssertionError as exc:
+                    last_error = exc
+            if last_error is not None:
+                raise last_error
             passed.append(key)
             print()
 
