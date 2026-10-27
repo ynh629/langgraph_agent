@@ -127,8 +127,8 @@ python -m eval.run_eval --layers judge --no-gate          # LLM-as-judge（需�
 ### 5. 启动服务
 
 ```bash
-python -m uvicorn service.app:app --host 0.0.0.0 --port 8000
-# 浏览器打开 http://localhost:8000 使用演示页；接口文档 /docs；健康检查 /ok
+python -m uvicorn service.app:app --host 0.0.0.0 --port 8001
+# 浏览器打开 http://localhost:8001 使用演示页；接口文档 /docs；健康检查 /ok
 ```
 
 ---
@@ -191,11 +191,11 @@ config = {"configurable": {"thread_id": tid}, "callbacks": build_callbacks(threa
 
 ```bash
 # 本地
-python -m uvicorn service.app:app --host 0.0.0.0 --port 8000
+python -m uvicorn service.app:app --host 0.0.0.0 --port 8001
 
 # Docker
 docker build -t ecom-agent:v4 .
-docker run -p 8000:8000 --env-file .env \
+docker run -p 8001:8001 --env-file .env \
   -v %USERPROFILE%\.cache\huggingface:/root/.cache/huggingface \
   ecom-agent:v4
 ```

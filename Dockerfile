@@ -7,7 +7,7 @@ ENV PYTHONUNBUFFERED=1 \
     HF_HUB_OFFLINE=1 \
     TRANSFORMERS_OFFLINE=1 \
     HOST=0.0.0.0 \
-    PORT=8000
+    PORT=8001
 
 WORKDIR /app
 
@@ -23,11 +23,11 @@ RUN pip install --upgrade pip \
 
 COPY . .
 
-EXPOSE 8000
+EXPOSE 8001
 
 # 健康检查：/ok 就绪即视为健康
 HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
-    CMD curl -fsS http://localhost:8000/ok || exit 1
+    CMD curl -fsS http://localhost:8001/ok || exit 1
 
 # 密钥通过 --env-file .env 注入，不打进镜像
-CMD ["uvicorn", "service.app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "service.app:app", "--host", "0.0.0.0", "--port", "8001"]

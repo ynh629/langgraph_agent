@@ -13,7 +13,7 @@ V4 最小可演示部署：FastAPI 暴露 V3 多智能体能力，含 SSE 流式
   POST /resume       人工审批中断后恢复执行（approve / reject）
 
 启动：
-  python -m uvicorn service.app:app --host 0.0.0.0 --port 8000
+  python -m uvicorn service.app:app --host 0.0.0.0 --port 8001
 """
 import json
 import os
@@ -342,4 +342,4 @@ async def resume(req: ResumeRequest) -> JSONResponse:
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host=os.getenv("HOST", "0.0.0.0"), port=int(os.getenv("PORT", "8000")))
+    uvicorn.run(app, host=os.getenv("HOST", "0.0.0.0"), port=int(os.getenv("PORT", "8001")))
